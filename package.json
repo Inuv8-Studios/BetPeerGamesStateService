@@ -2,11 +2,12 @@
   "name": "betpeermasterclient",
   "version": "1.0.0",
   "description": "Vault orchestrator for BetPeer Server",
-  "main": "src/gameStateServer.js",
+  "main": "dist/gameStateServer.js",
   "scripts": {
     "build": "tsc",
-    "start": "node src/gameStateServer.js",
+    "start": "node dist/gameStateServer.js",
     "dev": "ts-node src/gameStateServer.ts",
+    "postinstall": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
