@@ -6,10 +6,30 @@ export class ChessGame {
     public moveHistory: string = '{"moves":[]}'; 
     public playerTimes: string = '{}';
     public playerPoints: string = '{"player1Points":0,"player2Points":0}';
+    public playerIds: string[] = ['', '']; // [whitePlayerId, blackPlayerId]
+    public winnerId: string = '';
     public capturedPieces: any[] = [];
+    public lastPlayerToUpdate: string = '';
+    public isUpdated: boolean = false;
+    public interval: number = 1000; // 1 second
 
     constructor(roomId: string) {
         this.roomId = roomId;
+    }
+
+    public hasStartedLoop: boolean = false;
+    public startInterval() {
+        if (this.hasStartedLoop) return;
+        this.hasStartedLoop = true;
+
+        setInterval(() => {
+            if (this.isUpdated) this.isUpdated = false;
+            else {
+                this.gameState = 2;
+                this.currentPlayer = 0;
+                this.winnerId = this.currentPlayer === 0 ? this.playerIds[1] : this.playerIds[0]; // Opponent wins
+            }
+        }, this.interval);
     }
 
     // Accepts a partial state object from the Unity MasterClient and updates the Vault
@@ -19,7 +39,14 @@ export class ChessGame {
         if (newState.moveHistory !== undefined) this.moveHistory = newState.moveHistory;
         if (newState.playerTimes !== undefined) this.playerTimes = newState.playerTimes;
         if (newState.playerPoints !== undefined) this.playerPoints = newState.playerPoints;
+        if (newState.playerIds !== undefined) this.playerIds = newState.playerIds;
         if (newState.capturedPieces !== undefined) this.capturedPieces = newState.capturedPieces;
+        if (newState.lastPlayerToUpdate !== undefined) this.lastPlayerToUpdate = newState.lastPlayerToUpdate;
+        if (newState.winnerId !== undefined) this.winnerId = newState.winnerId;
+        if (newState.interval !== undefined) this.interval = newState.interval;
+        
+        this.isUpdated = true;
+        this.startInterval();
     }
 
     // Returns the data formatted exactly how your C# GameData class expects it
@@ -31,7 +58,10 @@ export class ChessGame {
             moveHistory: this.moveHistory,
             playerTimes: this.playerTimes,
             playerPoints: this.playerPoints,
-            capturedPieces: this.capturedPieces
+            capturedPieces: this.capturedPieces,
+            lastPlayerToUpdate: this.lastPlayerToUpdate,
+            winnerId: this.winnerId,
+            isUpdated: this.isUpdated
         };
     }
 }
