@@ -16,14 +16,19 @@ export class CheckersGame {
         this.roomId = roomId;
     }
 
+    public hasStartedLoop: boolean = false;
     public startInterval() {
+        if (this.hasStartedLoop) return;
+        this.hasStartedLoop = true;
+
         setInterval(() => {
-            if (this.isUpdated) this.isUpdated = false;
-            else {
-                this.gameState = 2;
-                this.currentPlayer = 0;
-                this.winnerId = this.currentPlayer === 0 ? this.playerIds[1] : this.playerIds[0]; // Opponent wins
-            }
+            console.log(`[Interval Check] Room ${this.roomId} | isUpdated: ${this.isUpdated}`);
+            // if (this.isUpdated) this.isUpdated = false;
+            // else {
+            //     this.gameState = 2;
+            //     this.currentPlayer = 0;
+            //     this.winnerId = this.currentPlayer === 0 ? this.playerIds[1] : this.playerIds[0]; // Opponent wins
+            // }
         }, this.interval);
     }
 
@@ -35,7 +40,7 @@ export class CheckersGame {
         if (newState.playerPoints !== undefined) this.playerPoints = newState.playerPoints;
         if (newState.playerIds !== undefined) this.playerIds = newState.playerIds;
         if (newState.lastPlayerToUpdate !== undefined) this.lastPlayerToUpdate = newState.lastPlayerToUpdate;
-        if (newState.interval !== undefined) this.interval = newState.interval;
+        // if (newState.interval !== undefined) this.interval = newState.interval;
         
         this.isUpdated = true;
         this.startInterval();
